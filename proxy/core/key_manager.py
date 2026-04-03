@@ -41,8 +41,10 @@ _QUOTA_PATTERNS: list[re.Pattern[str]] = [
     ]
 ]
 
-# HTTP status codes that indicate rate limiting / quota issues
-_QUOTA_STATUS_CODES: set[int] = {429, 503}
+# HTTP status codes that indicate rate limiting / quota issues.
+# 503 is intentionally excluded — it often indicates server maintenance,
+# not a per-key problem. Quota-related 503s are still caught by _QUOTA_PATTERNS.
+_QUOTA_STATUS_CODES: set[int] = {429}
 
 
 @dataclass
