@@ -1,0 +1,21 @@
+services:
+  proxy:
+    build: .
+    container_name: llmzone-proxy
+    ports:
+      - "${PROXY_PORT:-8080}:8080"
+    env_file:
+      - .env
+    environment:
+      - LOG_LEVEL=WARNING
+      - ENABLE_REQUEST_LOGGING=false
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    mem_limit: 256m
+    cpus: 1.0

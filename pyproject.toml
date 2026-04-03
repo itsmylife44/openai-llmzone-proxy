@@ -1,0 +1,25 @@
+[project]
+name = "llmzone-proxy"
+version = "1.0.0"
+description = "OpenAI API-compatible proxy for LLMZone that fixes broken responses"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.115.12",
+    "uvicorn[standard]==0.34.2",
+    "httpx==0.28.1",
+    "python-dotenv==1.1.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
