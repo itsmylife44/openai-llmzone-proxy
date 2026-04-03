@@ -98,18 +98,29 @@ LOG_LEVEL=WARNING
 ## Project Structure
 
 ```
-├── main.py                     # FastAPI app, routing, streaming
-├── config.py                   # Settings loaded from environment
-├── middleware/
-│   ├── response_validator.py   # 5-stage OpenAI spec validator
-│   ├── tool_call_fixer.py      # Tool-call response repairs
-│   ├── logging.py              # JSON request/response logger
-│   ├── responses_converter.py  # Responses API <-> Chat Completions converter
-│   └── key_manager.py          # API key rotation and blacklisting
-├── Dockerfile                  # Multi-stage build, Python 3.12-slim, non-root user
-├── docker-compose.yml          # Container orchestration
-├── .env.example                # Configuration template
-└── requirements.txt            # Python dependencies
+├── proxy/                         # Python package
+│   ├── app.py                     # FastAPI app factory, lifespan, entrypoint
+│   ├── config.py                  # Settings loaded from environment
+│   ├── core/                      # Domain logic (no FastAPI dependency)
+│   │   ├── key_manager.py         # API key rotation and blacklisting
+│   │   ├── request_log.py         # JSON request/response logger
+│   │   ├── response_validator.py  # 5-stage OpenAI spec validator
+│   │   ├── responses_converter.py # Responses API <-> Chat Completions converter
+│   │   └── tool_call_fixer.py     # Tool-call response repairs
+│   ├── handlers/                  # Request handling logic
+│   │   ├── non_streaming.py       # Non-streaming request handlers
+│   │   └── streaming.py           # SSE streaming handlers
+│   └── routes/                    # API route definitions
+│       ├── _helpers.py            # Shared route utilities
+│       ├── chat.py                # POST /v1/chat/completions
+│       ├── passthrough.py         # Health, models, catch-all
+│       └── responses.py           # POST /v1/responses
+├── tests/                         # Test suite
+├── Dockerfile                     # Multi-stage build, Python 3.12-slim
+├── docker-compose.yml             # Container orchestration
+├── .env.example                   # Configuration template
+├── pyproject.toml                 # Project metadata and tooling
+└── requirements.txt               # Python dependencies
 ```
 
 ## Running Without Docker
@@ -122,7 +133,7 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env
 
-uvicorn main:app --host 0.0.0.0 --port 8081
+uvicorn proxy.app:app --host 0.0.0.0 --port 8081
 ```
 
 ## Notes

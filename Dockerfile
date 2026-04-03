@@ -20,8 +20,7 @@ COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir /wheels/*.whl && rm -rf /wheels
 
 # Copy application code
-COPY --chown=appuser:appgroup config.py main.py ./
-COPY --chown=appuser:appgroup middleware/ ./middleware/
+COPY --chown=appuser:appgroup proxy/ ./proxy/
 
 # Create logs directory
 RUN mkdir -p /app/logs && chown appuser:appgroup /app/logs
@@ -34,4 +33,4 @@ EXPOSE 8081
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8081/health', timeout=5)" || exit 1
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8081", "--log-level", "warning"]
+CMD ["python", "-m", "uvicorn", "proxy.app:app", "--host", "0.0.0.0", "--port", "8081", "--log-level", "warning"]

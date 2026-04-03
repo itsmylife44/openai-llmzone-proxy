@@ -1,5 +1,5 @@
 [project]
-name = "llmzone-proxy"
+name = "openai-llmzone-proxy"
 version = "1.0.0"
 description = "OpenAI API-compatible proxy for LLMZone that fixes broken responses"
 readme = "README.md"
@@ -12,6 +12,9 @@ dependencies = [
     "python-dotenv==1.1.0",
 ]
 
+[project.scripts]
+llmzone-proxy = "proxy.app:main"
+
 [tool.ruff]
 line-length = 120
 target-version = "py312"
@@ -20,6 +23,12 @@ target-version = "py312"
 select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM"]
 ignore = ["E501"]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -12,8 +12,8 @@ import time
 import uuid
 from pathlib import Path
 
-import config
-from config import LOG_DIR, LOG_LEVEL
+from proxy import config
+from proxy.config import LOG_DIR, LOG_LEVEL
 
 logger = logging.getLogger("proxy.logging")
 

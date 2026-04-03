@@ -156,8 +156,7 @@ class KeyManager:
             soonest = min(ks.blacklisted_until for ks in self._keys)
             remaining = max(0, soonest - time.time())
             logger.warning(
-                "KeyManager: ALL %d keys are blacklisted! "
-                "Soonest recovery in %.0f seconds",
+                "KeyManager: ALL %d keys are blacklisted! Soonest recovery in %.0f seconds",
                 n,
                 remaining,
             )
@@ -186,9 +185,7 @@ class KeyManager:
         with self._lock:
             ks = self._find_key(key)
             if ks is None:
-                logger.warning(
-                    "KeyManager: report_error for unknown key %s", key[:12] + "..."
-                )
+                logger.warning("KeyManager: report_error for unknown key %s", key[:12] + "...")
                 return
 
             ks.total_errors += 1

@@ -200,9 +200,7 @@ def fix_tool_calls_response(response: dict) -> list[str]:
                         choice_idx,
                     )
                     message["content"] = cleaned_content
-                    fixes.append(
-                        f"choice[{choice_idx}]: removed think tags from content"
-                    )
+                    fixes.append(f"choice[{choice_idx}]: removed think tags from content")
                     content = cleaned_content
 
             # --- Fix E: Mixed content + tool_calls ---
@@ -214,9 +212,7 @@ def fix_tool_calls_response(response: dict) -> list[str]:
                         choice_idx,
                     )
                     message["content"] = None
-                    fixes.append(
-                        f"choice[{choice_idx}]: cleared whitespace-only content alongside tool_calls"
-                    )
+                    fixes.append(f"choice[{choice_idx}]: cleared whitespace-only content alongside tool_calls")
                 # Always ensure finish_reason is "tool_calls" when tool_calls present
             if choice.get("finish_reason") != "tool_calls":
                 logger.debug(
@@ -280,9 +276,7 @@ def fix_tool_calls_response(response: dict) -> list[str]:
                         tc_idx,
                     )
                     func["arguments"] = "{}"
-                    fixes.append(
-                        f"choice[{choice_idx}].tool_calls[{tc_idx}]: set empty/null arguments to '{{}}'"
-                    )
+                    fixes.append(f"choice[{choice_idx}].tool_calls[{tc_idx}]: set empty/null arguments to '{{}}'")
                     continue
 
                 if not isinstance(args, str):
@@ -307,9 +301,7 @@ def fix_tool_calls_response(response: dict) -> list[str]:
                         choice_idx,
                         tc_idx,
                     )
-                    fixes.append(
-                        f"choice[{choice_idx}].tool_calls[{tc_idx}]: removed think tags from arguments"
-                    )
+                    fixes.append(f"choice[{choice_idx}].tool_calls[{tc_idx}]: removed think tags from arguments")
                     args = cleaned_args
 
                 # --- Fix C: Malformed JSON in arguments ---
@@ -326,9 +318,7 @@ def fix_tool_calls_response(response: dict) -> list[str]:
                         tc_idx,
                     )
                     func["arguments"] = sanitized
-                    fixes.append(
-                        f"choice[{choice_idx}].tool_calls[{tc_idx}]: sanitized malformed JSON arguments"
-                    )
+                    fixes.append(f"choice[{choice_idx}].tool_calls[{tc_idx}]: sanitized malformed JSON arguments")
 
     except Exception as exc:
         logger.exception("fix_tool_calls_response: unexpected error: %s", exc)
@@ -397,9 +387,7 @@ def fix_streaming_tool_calls(
                         final_finish_chunk_idx,
                     )
                     choice["finish_reason"] = "tool_calls"
-                    fixes.append(
-                        f"chunk[{final_finish_chunk_idx}]: changed finish_reason 'stop' → 'tool_calls'"
-                    )
+                    fixes.append(f"chunk[{final_finish_chunk_idx}]: changed finish_reason 'stop' → 'tool_calls'")
 
         # --- Pass 2: collect all unique indices, then re-index to 0-based ---
         # First collect every unique index we see (in encounter order)
@@ -438,9 +426,7 @@ def fix_streaming_tool_calls(
         # --- Pass 3: fix indices, missing index, and track ids ---
         tc_counter = 0
         tc_id_by_index: dict[int, str | None] = {}
-        first_delta_by_index: dict[
-            int, int
-        ] = {}  # new_index → chunk_idx of first occurrence
+        first_delta_by_index: dict[int, int] = {}  # new_index → chunk_idx of first occurrence
 
         for chunk_idx, chunk in enumerate(chunks):
             if not isinstance(chunk, dict):
@@ -468,9 +454,7 @@ def fix_streaming_tool_calls(
                             chunk_idx,
                             tc_counter,
                         )
-                        fixes.append(
-                            f"chunk[{chunk_idx}]: assigned index {tc_counter} to tool_call delta"
-                        )
+                        fixes.append(f"chunk[{chunk_idx}]: assigned index {tc_counter} to tool_call delta")
                         tc_counter += 1
                     elif needs_reindex:
                         old_idx = tc_delta["index"]

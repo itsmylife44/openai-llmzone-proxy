@@ -2,6 +2,7 @@
 .gitignore
 .github
 __pycache__
+**/__pycache__
 *.pyc
 .venv
 venv
@@ -23,4 +24,3 @@ tests/
 .pytest_cache
 .mypy_cache
 .ruff_cache
-pyproject.toml

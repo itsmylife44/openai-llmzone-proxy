@@ -156,22 +156,16 @@ def _convert_input_item(item: dict, messages: list[dict]) -> None:
                 elif isinstance(part, dict):
                     ptype = part.get("type", "text")
                     if ptype == "input_text":
-                        chat_content.append(
-                            {"type": "text", "text": part.get("text", "")}
-                        )
+                        chat_content.append({"type": "text", "text": part.get("text", "")})
                     elif ptype == "input_image":
                         chat_content.append(
                             {
                                 "type": "image_url",
-                                "image_url": {
-                                    "url": part.get("image_url", part.get("url", ""))
-                                },
+                                "image_url": {"url": part.get("image_url", part.get("url", ""))},
                             }
                         )
                     elif ptype == "text":
-                        chat_content.append(
-                            {"type": "text", "text": part.get("text", "")}
-                        )
+                        chat_content.append({"type": "text", "text": part.get("text", "")})
                     else:
                         chat_content.append(part)
             messages.append({"role": role, "content": chat_content})
@@ -196,9 +190,7 @@ def _convert_input_item(item: dict, messages: list[dict]) -> None:
                 "content": None,
                 "tool_calls": [
                     {
-                        "id": item.get(
-                            "call_id", item.get("id", f"call_{uuid.uuid4().hex[:24]}")
-                        ),
+                        "id": item.get("call_id", item.get("id", f"call_{uuid.uuid4().hex[:24]}")),
                         "type": "function",
                         "function": {
                             "name": item.get("name", ""),
@@ -560,17 +552,13 @@ def chat_chunk_to_responses_events(
         }
         status = status_map.get(finish_reason, "completed")
         resp_obj = _make_response_obj(state, status=status)
-        event_type = (
-            "response.completed" if status == "completed" else f"response.{status}"
-        )
+        event_type = "response.completed" if status == "completed" else f"response.{status}"
         _emit({"type": event_type, "response": resp_obj})
 
     return events
 
 
-def _make_response_obj(
-    state: ResponsesStreamState, status: str = "in_progress"
-) -> dict:
+def _make_response_obj(state: ResponsesStreamState, status: str = "in_progress") -> dict:
     """Build a response object for created/completed events."""
     output: list[dict] = []
     if state.collected_text:
