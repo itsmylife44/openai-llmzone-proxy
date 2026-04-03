@@ -119,6 +119,7 @@ async def handle_streaming(
 
                         if line == "data: [DONE]":
                             # Before sending DONE, check if we need streaming fixes
+                            stream_fixes: list[str] = []
                             if collected_chunks and config.ENABLE_TOOL_FIXER:
                                 fixed_chunks, stream_fixes = fix_streaming_tool_calls(collected_chunks)
 
@@ -133,28 +134,17 @@ async def handle_streaming(
                                                 yield f"data: {json.dumps(fc)}\n\n".encode()
                                                 final_finish_reason = "tool_calls"
 
-                                    if config.ENABLE_REQUEST_LOGGING:
-                                        duration_ms = (time.monotonic() - t0) * 1000
-                                        log_streaming_summary(
-                                            request_id,
-                                            chunk_count,
-                                            stream_fixes,
-                                            duration_ms,
-                                            had_tool_calls,
-                                            final_finish_reason,
-                                        )
-
                             yield b"data: [DONE]\n\n"
 
                             # Stream completed successfully
                             report_upstream_success(key_manager, api_key)
 
-                            if config.ENABLE_REQUEST_LOGGING and not had_tool_calls:
+                            if config.ENABLE_REQUEST_LOGGING:
                                 duration_ms = (time.monotonic() - t0) * 1000
                                 log_streaming_summary(
                                     request_id,
                                     chunk_count,
-                                    [],
+                                    stream_fixes,
                                     duration_ms,
                                     had_tool_calls,
                                     final_finish_reason,

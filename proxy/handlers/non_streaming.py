@@ -83,6 +83,10 @@ async def handle_non_streaming(
             },
         )
 
+    # Guard against JSON null body
+    if upstream_data is None:
+        upstream_data = {}
+
     # ── If upstream returned an error, report to key manager & pass through
     if resp.status_code >= 400:
         error_text = json.dumps(upstream_data) if upstream_data else ""
@@ -150,6 +154,10 @@ async def handle_responses_non_streaming(
                 }
             },
         )
+
+    # Guard against JSON null body
+    if upstream_data is None:
+        upstream_data = {}
 
     if resp.status_code >= 400:
         error_text = json.dumps(upstream_data) if upstream_data else ""

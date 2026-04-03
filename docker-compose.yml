@@ -14,5 +14,6 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+      - /app/logs
     mem_limit: 256m
     cpus: 1.0

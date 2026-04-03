@@ -16,25 +16,11 @@ from fastapi import FastAPI
 from proxy import config
 from proxy.core.key_manager import KeyManager
 from proxy.core.request_log import setup_logging
+from proxy.routes.chat import router as chat_router
+from proxy.routes.passthrough import router as passthrough_router
+from proxy.routes.responses import router as responses_router
 
-# ── Logging ─────────────────────────────────────────────────────────
-setup_logging(config.LOG_LEVEL)
 logger = logging.getLogger("proxy")
-
-# ── Key Manager (rotation + blacklisting) ──────────────────────────
-key_manager: KeyManager | None = None
-if config.UPSTREAM_API_KEYS:
-    key_manager = KeyManager(
-        keys=config.UPSTREAM_API_KEYS,
-        cooldown_seconds=config.KEY_COOLDOWN_SECONDS,
-    )
-    logger.info(
-        "Key rotation enabled: %d key(s), cooldown=%ds",
-        key_manager.key_count,
-        config.KEY_COOLDOWN_SECONDS,
-    )
-else:
-    logger.info("Key rotation disabled: no API keys configured")
 
 
 # ── Lifespan ─────────────────────────────────────────────────────────
@@ -42,6 +28,25 @@ else:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # ── Logging ─────────────────────────────────────────────────────
+    setup_logging(config.LOG_LEVEL)
+
+    # ── Key Manager (rotation + blacklisting) ──────────────────────
+    key_manager: KeyManager | None = None
+    if config.UPSTREAM_API_KEYS:
+        key_manager = KeyManager(
+            keys=config.UPSTREAM_API_KEYS,
+            cooldown_seconds=config.KEY_COOLDOWN_SECONDS,
+        )
+        logger.info(
+            "Key rotation enabled: %d key(s), cooldown=%ds",
+            key_manager.key_count,
+            config.KEY_COOLDOWN_SECONDS,
+        )
+    else:
+        logger.info("Key rotation disabled: no API keys configured")
+
+    # ── HTTP client ─────────────────────────────────────────────────
     app.state.http_client = httpx.AsyncClient(
         timeout=httpx.Timeout(config.UPSTREAM_TIMEOUT, connect=10.0),
         limits=httpx.Limits(max_connections=50, max_keepalive_connections=10),
@@ -65,10 +70,6 @@ app = FastAPI(
 )
 
 # ── Routers ──────────────────────────────────────────────────────────
-
-from proxy.routes.chat import router as chat_router
-from proxy.routes.responses import router as responses_router
-from proxy.routes.passthrough import router as passthrough_router
 
 app.include_router(chat_router)
 app.include_router(responses_router)

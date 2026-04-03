@@ -43,12 +43,9 @@ UPSTREAM_API_KEYS: list[str] = (
 # Cooldown in seconds when a key is blacklisted (default: 2 hours)
 KEY_COOLDOWN_SECONDS: int = _env_int("KEY_COOLDOWN_SECONDS", 7200)
 
-# Enable/disable key rotation (auto-enabled when multiple keys present)
-ENABLE_KEY_ROTATION: bool = _env_bool("ENABLE_KEY_ROTATION", len(UPSTREAM_API_KEYS) > 1)
-
 # ── Proxy server ────────────────────────────────────────────────────
 PROXY_HOST: str = _env("PROXY_HOST", "0.0.0.0")
-PROXY_PORT: int = _env_int("PROXY_PORT", 8080)
+PROXY_PORT: int = _env_int("PROXY_PORT", 8081)
 
 # ── Feature flags ───────────────────────────────────────────────────
 ENABLE_TOOL_FIXER: bool = _env_bool("ENABLE_TOOL_FIXER", True)

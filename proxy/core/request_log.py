@@ -13,7 +13,6 @@ import uuid
 from pathlib import Path
 
 from proxy import config
-from proxy.config import LOG_DIR, LOG_LEVEL
 
 logger = logging.getLogger("proxy.logging")
 
@@ -74,7 +73,7 @@ def log_request(
     )
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    file_path = LOG_DIR / f"{timestamp}_{request_id}_req.json"
+    file_path = config.LOG_DIR / f"{timestamp}_{request_id}_req.json"
 
     _write_json_file(
         file_path,
@@ -122,7 +121,7 @@ def log_response(
         logger.info("[RES %s] fix applied: %s", request_id, fix)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    file_path = LOG_DIR / f"{timestamp}_{request_id}_res.json"
+    file_path = config.LOG_DIR / f"{timestamp}_{request_id}_res.json"
 
     _write_json_file(
         file_path,
@@ -157,7 +156,7 @@ def log_streaming_summary(
     )
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    file_path = LOG_DIR / f"{timestamp}_{request_id}_stream.json"
+    file_path = config.LOG_DIR / f"{timestamp}_{request_id}_stream.json"
 
     _write_json_file(
         file_path,

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from fastapi import Request
+from fastapi.responses import JSONResponse
+
 from proxy import config
 from proxy.core.key_manager import KeyManager
 
@@ -45,9 +47,7 @@ def upstream_headers(request: Request, api_key: str | None = None) -> dict[str, 
     return headers
 
 
-def all_keys_blacklisted_response():
-    from fastapi.responses import JSONResponse
-
+def all_keys_blacklisted_response() -> JSONResponse:
     return JSONResponse(
         status_code=503,
         content={

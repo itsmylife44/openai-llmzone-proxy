@@ -10,6 +10,7 @@ import httpx
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
 
+from proxy import config
 from proxy.routes._helpers import upstream_headers, upstream_url
 
 logger = logging.getLogger("proxy")
@@ -22,8 +23,6 @@ router = APIRouter()
 
 @router.get("/health")
 async def health(request: Request) -> dict:
-    from proxy import config
-
     key_manager = request.app.state.key_manager
 
     result: dict = {
@@ -33,7 +32,7 @@ async def health(request: Request) -> dict:
             "response_validator": config.ENABLE_RESPONSE_VALIDATOR,
             "tool_fixer": config.ENABLE_TOOL_FIXER,
             "request_logging": config.ENABLE_REQUEST_LOGGING,
-            "key_rotation": config.ENABLE_KEY_ROTATION,
+            "key_rotation": key_manager is not None,
         },
     }
     if key_manager is not None:
