@@ -36,8 +36,8 @@ LLMZone's API is largely OpenAI-compatible but contains several response formatt
 ## Quick Start
 
 ```bash
-git clone <repo-url>
-cd proxy-test
+git clone https://github.com/itsmylife44/openai-llmzone-proxy.git
+cd openai-llmzone-proxy
 
 cp .env.example .env
 # Edit .env and fill in your UPSTREAM_API_KEYS
